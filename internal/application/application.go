@@ -16,7 +16,7 @@ func New(config *config.Config) *Application {
 }
 
 func (app *Application) Run() {
-	repo := repository.New()
+	repo := repository.New(app.config.DB)
 
 	uc := usecase.New(repo)
 

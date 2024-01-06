@@ -1,13 +1,18 @@
 package repository
 
-import "fmt"
+import (
+	"clean_architecture_go/internal/config"
+	"fmt"
+)
 
-type Repo struct{}
+type Repo struct {
+	config *config.DBConfig
+}
 
 func (r Repo) Get() {
 	fmt.Println("Repo called")
 }
 
-func New() *Repo {
-	return &Repo{}
+func New(config *config.DBConfig) *Repo {
+	return &Repo{config}
 }

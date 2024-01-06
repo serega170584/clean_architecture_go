@@ -2,6 +2,15 @@
   "app": {
     "name": "clean_architecture",
     "host": "localhost",
-    "port": "4447"
+    "port": "4447",
+    "admin_login": "admin",
+    "admin_token": "123456"
+  },
+  "db": {
+    "host": "localhost",
+    "port": "5433",
+    "database": "postgres",
+    "user": "postgres",
+    "password": "postgres"
   }
 }
