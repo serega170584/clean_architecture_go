@@ -1,0 +1,7 @@
+{
+  "app": {
+    "name": "clean_architecture",
+    "host": "localhost",
+    "port": "4447"
+  }
+}
