@@ -31,6 +31,7 @@ func (c *Controller) Serve() {
 		err := decoder.Decode(&user)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 		_ = json.NewEncoder(w).Encode("{}")
 		//c.uc.Do(user.Login, user.Password)

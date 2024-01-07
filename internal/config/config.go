@@ -23,7 +23,7 @@ type DBConfig struct {
 }
 
 type Config struct {
-	App *AppConfig `json:"application"`
+	App *AppConfig `json:"app"`
 	DB  *DBConfig  `json:"db"`
 }
 
