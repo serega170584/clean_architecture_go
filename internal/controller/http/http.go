@@ -4,6 +4,7 @@ import (
 	"clean_architecture_go/internal/config"
 	"clean_architecture_go/internal/infrastructure/repository"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -27,6 +28,11 @@ func New(uc UserUseCase, conf *config.AppConfig) *Controller { return &Controlle
 
 func (c *Controller) Serve() {
 	http.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, fmt.Sprintf("Method %s not allowed", r.Method), http.StatusMethodNotAllowed)
+			return
+		}
+
 		decoder := json.NewDecoder(r.Body)
 		var user User
 		err := decoder.Decode(&user)
