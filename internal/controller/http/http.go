@@ -32,7 +32,8 @@ func (c *Controller) Serve() {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
-		c.uc.Do(user.Login, user.Password)
+		_ = json.NewEncoder(w).Encode("{}")
+		//c.uc.Do(user.Login, user.Password)
 	})
 	log.Fatal(http.ListenAndServe(net.JoinHostPort(c.conf.Host, c.conf.Port), nil))
 }
