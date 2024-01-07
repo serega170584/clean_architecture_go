@@ -1,9 +1,11 @@
 package usecase
 
-import "clean_architecture_go/internal/infrastructure/repository"
+import (
+	"clean_architecture_go/internal/infrastructure/repository"
+)
 
 type Repository interface {
-	Get(login string, password string) (*repository.User, error)
+	Get(login string, password string) (*repository.Token, error)
 }
 
 type UserUseCase struct {
@@ -12,6 +14,6 @@ type UserUseCase struct {
 
 func New(r Repository) *UserUseCase { return &UserUseCase{r} }
 
-func (uc *UserUseCase) Do(login string, password string) {
-	uc.repo.Get(login, password)
+func (uc *UserUseCase) Do(login string, password string) (*repository.Token, error) {
+	return uc.repo.Get(login, password)
 }

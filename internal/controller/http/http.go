@@ -2,6 +2,7 @@ package controller
 
 import (
 	"clean_architecture_go/internal/config"
+	"clean_architecture_go/internal/infrastructure/repository"
 	"encoding/json"
 	"log"
 	"net"
@@ -9,7 +10,7 @@ import (
 )
 
 type UserUseCase interface {
-	Do(login string, password string)
+	Do(login string, password string) (*repository.Token, error)
 }
 
 type Controller struct {
@@ -34,7 +35,7 @@ func (c *Controller) Serve() {
 			return
 		}
 		_ = json.NewEncoder(w).Encode("{}")
-		//c.uc.Do(user.Login, user.Password)
+		c.uc.Do(user.Login, user.Password)
 	})
 	log.Fatal(http.ListenAndServe(net.JoinHostPort(c.conf.Host, c.conf.Port), nil))
 }

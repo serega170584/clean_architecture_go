@@ -9,14 +9,18 @@ type Repo struct {
 	conn *pgx.Conn
 }
 
-func (r Repo) Get(login string, password string) (*User, error) {
-	user := &User{}
+type Token struct {
+	token string
+}
+
+func (r Repo) Get(login string, password string) (*Token, error) {
+	token := &Token{}
 	err := r.conn.QueryRow(context.Background(), `
-		SELECT login, first_name, second_name
+		SELECT token
 		FROM product_user
 		WHERE login = %1 AND password = %2
-`, login, password).Scan(user.login, user.firstName, user.secondName)
-	return user, err
+`, login, password).Scan(token.token)
+	return token, err
 }
 
 func New(conn *pgx.Conn) *Repo {
