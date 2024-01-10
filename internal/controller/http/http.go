@@ -14,7 +14,7 @@ import (
 
 type UserUseCase interface {
 	Do(login string, password string) (*repository.Token, error)
-	AddTransfers(transfersChunkJSON []byte) (*repository.Token, error)
+	AddTransfers(transfersChunkJSON []byte) ([]byte, error)
 }
 
 type Controller struct {
