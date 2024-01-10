@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -13,13 +14,32 @@ type Token struct {
 	token string
 }
 
+func (t *Token) Token() string {
+	return t.token
+}
+
+type TransferChunk struct {
+	chunk uuid.UUID
+}
+
+func (tc *TransferChunk) Uuid() uuid.UUID {
+	return tc.chunk
+}
+
 func (r Repo) Get(login string, password string) (*Token, error) {
 	token := &Token{}
+	var t string
 	err := r.conn.QueryRow(context.Background(), `
 		SELECT token
 		FROM product_user
-		WHERE login = %1 AND password = %2
-`, login, password).Scan(token.token)
+		WHERE login = $1 AND password = $2
+`, login, password).Scan(&t)
+
+	if err != nil {
+		return token, err
+	}
+
+	token.token = t
 	return token, err
 }
 
