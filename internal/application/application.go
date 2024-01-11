@@ -7,8 +7,7 @@ import (
 	pool "clean_architecture_go/internal/infrastructure/pool/transfer"
 	"clean_architecture_go/internal/infrastructure/repository"
 	"clean_architecture_go/internal/usecase"
-	"context"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 const TransferListenerSize = 5
@@ -23,9 +22,9 @@ func New(config *config.Config) *Application {
 
 func (app *Application) Run() {
 	conn := connection.NewConnection(app.config.DB)
-	defer func(conn *pgx.Conn, ctx context.Context) {
-		_ = conn.Close(ctx)
-	}(conn, context.Background())
+	defer func(conn *pgxpool.Pool) {
+		conn.Close()
+	}(conn)
 
 	repo := repository.New(conn)
 
