@@ -2,9 +2,7 @@ package usecase
 
 import (
 	"clean_architecture_go/internal/infrastructure/repository"
-	"encoding/json"
 	"github.com/google/uuid"
-	"github.com/pkg/errors"
 	"time"
 )
 
@@ -14,6 +12,7 @@ type Repository interface {
 
 type TransferJobListener interface {
 	Listen()
+	Handle(transfersJSON []byte)
 }
 
 type UserUseCase struct {
@@ -41,11 +40,7 @@ func (uc *UserUseCase) Do(login string, password string) (*repository.Token, err
 }
 
 func (uc *UserUseCase) AddTransfers(transfersChunkJSON []byte) ([]byte, error) {
-	var transferChunk TransfersChunk
-	err := json.Unmarshal(transfersChunkJSON, &transferChunk)
-	if err != nil {
-		return nil, errors.Errorf("Transfers chunk decode error: %s", err.Error())
-	}
+	uc.transferJobListener.Handle(transfersChunkJSON)
 	return nil, nil
 }
 

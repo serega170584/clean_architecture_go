@@ -1,6 +1,8 @@
 package pool
 
-import "github.com/jackc/pgx/v5"
+import (
+	"github.com/jackc/pgx/v5"
+)
 
 type Listener struct {
 	ch     chan Job
@@ -19,4 +21,9 @@ func (listener *Listener) Listen() {
 			<-ch
 		}(listener.ch)
 	}
+}
+
+func (listener *Listener) Handle(transferJobJSON []byte) {
+	pool := NewJobsPool(transferJobJSON, listener.ch)
+	pool.send()
 }
