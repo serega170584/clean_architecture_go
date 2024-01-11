@@ -12,8 +12,13 @@ type Repository interface {
 	Get(login string, password string) (*repository.Token, error)
 }
 
+type TransferJobListener interface {
+	Listen()
+}
+
 type UserUseCase struct {
-	repo Repository
+	repo                Repository
+	transferJobListener TransferJobListener
 }
 
 type Transfer struct {
@@ -27,7 +32,9 @@ type TransfersChunk struct {
 	Transfers []Transfer `json:"transfer"`
 }
 
-func New(r Repository) *UserUseCase { return &UserUseCase{r} }
+func New(r Repository, transferJobListener TransferJobListener) *UserUseCase {
+	return &UserUseCase{r, transferJobListener}
+}
 
 func (uc *UserUseCase) Do(login string, password string) (*repository.Token, error) {
 	return uc.repo.Get(login, password)
@@ -40,4 +47,8 @@ func (uc *UserUseCase) AddTransfers(transfersChunkJSON []byte) ([]byte, error) {
 		return nil, errors.Errorf("Transfers chunk decode error: %s", err.Error())
 	}
 	return nil, nil
+}
+
+func (uc *UserUseCase) TransferJobListen() {
+	uc.transferJobListener.Listen()
 }

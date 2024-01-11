@@ -15,6 +15,7 @@ import (
 type UserUseCase interface {
 	Do(login string, password string) (*repository.Token, error)
 	AddTransfers(transfersChunkJSON []byte) ([]byte, error)
+	TransferJobListen()
 }
 
 type Controller struct {
@@ -85,5 +86,8 @@ func (c *Controller) Serve() {
 		transfersChunkJSON, _ := json.Marshal(transfersChunk)
 		_, _ = c.uc.AddTransfers(transfersChunkJSON)
 	})
+
+	c.uc.TransferJobListen()
+
 	log.Fatal(http.ListenAndServe(net.JoinHostPort(c.conf.Host, c.conf.Port), nil))
 }

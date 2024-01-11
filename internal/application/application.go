@@ -4,11 +4,14 @@ import (
 	"clean_architecture_go/internal/config"
 	controller "clean_architecture_go/internal/controller/http"
 	"clean_architecture_go/internal/infrastructure/connection"
+	pool "clean_architecture_go/internal/infrastructure/pool/transfer"
 	"clean_architecture_go/internal/infrastructure/repository"
 	"clean_architecture_go/internal/usecase"
 	"context"
 	"github.com/jackc/pgx/v5"
 )
+
+const TransferListenerSize = 5
 
 type Application struct {
 	config *config.Config
@@ -26,7 +29,9 @@ func (app *Application) Run() {
 
 	repo := repository.New(conn)
 
-	uc := usecase.New(repo)
+	transferJobListener := pool.NewListener(TransferListenerSize, conn)
+
+	uc := usecase.New(repo, transferJobListener)
 
 	c := controller.New(uc, app.config.App)
 	c.Serve()
