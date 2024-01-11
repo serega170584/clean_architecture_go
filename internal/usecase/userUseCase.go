@@ -24,7 +24,7 @@ type Transfer struct {
 type TransfersChunk struct {
 	Token     string     `json:"token"`
 	Id        uuid.UUID  `json:"uuid"`
-	Transfers []Transfer `json:"transfers"`
+	Transfers []Transfer `json:"transfer"`
 }
 
 func New(r Repository) *UserUseCase { return &UserUseCase{r} }

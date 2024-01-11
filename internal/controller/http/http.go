@@ -34,7 +34,7 @@ type Token struct {
 type TransfersChunk struct {
 	Token     string     `json:"token"`
 	Id        uuid.UUID  `json:"uuid"`
-	Transfers []Transfer `json:"transfers"`
+	Transfers []Transfer `json:"transfer"`
 }
 
 type Transfer struct {

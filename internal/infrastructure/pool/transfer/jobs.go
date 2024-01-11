@@ -14,7 +14,7 @@ type Transfer struct {
 type TransfersChunk struct {
 	Token     string     `json:"token"`
 	Id        uuid.UUID  `json:"uuid"`
-	Transfers []Transfer `json:"transfers"`
+	Transfers []Transfer `json:"transfer"`
 }
 
 type JobsPool struct {
@@ -28,7 +28,7 @@ type Job struct {
 	OperationDate time.Time `json:"date"`
 }
 
-func NewTransfersJobsPool(transfersChunkJSON []byte, ch chan Job) *JobsPool {
+func NewJobsPool(transfersChunkJSON []byte, ch chan Job) *JobsPool {
 	var transfersChunk TransfersChunk
 	_ = json.Unmarshal(transfersChunkJSON, &transfersChunk)
 	jobs := make([]Job, len(transfersChunk.Transfers))
