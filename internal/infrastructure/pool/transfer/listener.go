@@ -19,11 +19,13 @@ func NewListener(size int, dbConn *pgxpool.Pool) *Listener {
 func (listener *Listener) Listen() {
 	for i := 0; i < listener.size; i++ {
 		go func(listener *Listener) {
-			job := <-listener.ch
-			conn := listener.dbConn
-			_, _ = conn.Exec(context.Background(), `
+			for {
+				job := <-listener.ch
+				conn := listener.dbConn
+				_, _ = conn.Exec(context.Background(), `
 INSERT INTO transfer(sum, operation_date, chunk_uuid) 
 VALUES($1, $2, $3)`, job.Sum, job.OperationDate, job.Id)
+			}
 		}(listener)
 	}
 }

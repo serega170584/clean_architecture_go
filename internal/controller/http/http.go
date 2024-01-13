@@ -14,6 +14,7 @@ import (
 
 type UserUseCase interface {
 	Do(login string, password string) (*repository.Token, error)
+	AddOrders(ordersChunkJSON []byte) ([]byte, error)
 	AddTransfers(transfersChunkJSON []byte) ([]byte, error)
 	TransferJobListen()
 }
@@ -21,6 +22,17 @@ type UserUseCase interface {
 type Controller struct {
 	uc   UserUseCase
 	conf *config.AppConfig
+}
+
+type BankOrder struct {
+	Sum           int64     `json:"sum"`
+	OperationDate time.Time `json:"date"`
+}
+
+type OrdersChunk struct {
+	Token  string      `json:"token"`
+	Id     uuid.UUID   `json:"uuid"`
+	Orders []BankOrder `json:"orders"`
 }
 
 type User struct {
@@ -85,6 +97,23 @@ func (c *Controller) Serve() {
 
 		transfersChunkJSON, _ := json.Marshal(transfersChunk)
 		_, _ = c.uc.AddTransfers(transfersChunkJSON)
+	})
+
+	http.HandleFunc("/orders", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, fmt.Sprintf("Method %s not allowed", r.Method), http.StatusMethodNotAllowed)
+			return
+		}
+
+		decoder := json.NewDecoder(r.Body)
+		var ordersChunk OrdersChunk
+		err := decoder.Decode(&ordersChunk)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+
+		ordersChunkJSON, _ := json.Marshal(ordersChunk)
+		_, _ = c.uc.AddOrders(ordersChunkJSON)
 	})
 
 	c.uc.TransferJobListen()

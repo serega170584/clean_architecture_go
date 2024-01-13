@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+type Queue interface {
+	Handle(orderJobJSON []byte)
+}
+
 type Repository interface {
 	Get(login string, password string) (*repository.Token, error)
 }
@@ -18,6 +22,7 @@ type TransferJobListener interface {
 type UserUseCase struct {
 	repo                Repository
 	transferJobListener TransferJobListener
+	orderJobQueue       Queue
 }
 
 type Transfer struct {
@@ -31,12 +36,17 @@ type TransfersChunk struct {
 	Transfers []Transfer `json:"transfer"`
 }
 
-func New(r Repository, transferJobListener TransferJobListener) *UserUseCase {
-	return &UserUseCase{r, transferJobListener}
+func New(r Repository, transferJobListener TransferJobListener, orderJobQueue Queue) *UserUseCase {
+	return &UserUseCase{repo: r, transferJobListener: transferJobListener, orderJobQueue: orderJobQueue}
 }
 
 func (uc *UserUseCase) Do(login string, password string) (*repository.Token, error) {
 	return uc.repo.Get(login, password)
+}
+
+func (uc *UserUseCase) AddOrders(ordersChunkJSON []byte) ([]byte, error) {
+	uc.orderJobQueue.Handle(ordersChunkJSON)
+	return nil, nil
 }
 
 func (uc *UserUseCase) AddTransfers(transfersChunkJSON []byte) ([]byte, error) {
