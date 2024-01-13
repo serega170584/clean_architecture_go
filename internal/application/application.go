@@ -32,7 +32,7 @@ func (app *Application) Run() {
 
 	transferJobListener := pool.NewListener(TransferListenerSize, conn)
 
-	q := queue.New(OrderQueueSize, true)
+	q := queue.New(OrderQueueSize, true, conn)
 
 	uc := usecase.New(repo, transferJobListener, q)
 

@@ -11,9 +11,9 @@ type Queue struct {
 	dbConn  *pgxpool.Pool
 }
 
-func New(size int, isAsynq bool) *Queue {
+func New(size int, isAsynq bool, dbConn *pgxpool.Pool) *Queue {
 	ch := make(chan Job, size)
-	return &Queue{ch: ch, isAsynq: isAsynq}
+	return &Queue{ch: ch, isAsynq: isAsynq, dbConn: dbConn}
 }
 
 func (q *Queue) processJobs(jobs []Job) {
