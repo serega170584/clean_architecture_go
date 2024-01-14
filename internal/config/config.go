@@ -22,9 +22,14 @@ type DBConfig struct {
 	Password string `json:"password"`
 }
 
+type QueueConfig struct {
+	IsAsync bool `json:"isAsync"`
+}
+
 type Config struct {
-	App *AppConfig `json:"app"`
-	DB  *DBConfig  `json:"db"`
+	App   *AppConfig   `json:"app"`
+	DB    *DBConfig    `json:"db"`
+	Queue *QueueConfig `json:"queue"`
 }
 
 func New() *Config {

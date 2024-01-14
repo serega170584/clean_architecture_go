@@ -12,5 +12,8 @@
     "database": "postgres",
     "user": "postgres",
     "password": "postgres"
+  },
+  "queue": {
+    "isAsync": true
   }
 }

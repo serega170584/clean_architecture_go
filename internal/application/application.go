@@ -4,6 +4,7 @@ import (
 	"clean_architecture_go/internal/config"
 	controller "clean_architecture_go/internal/controller/http"
 	"clean_architecture_go/internal/infrastructure/connection"
+	"clean_architecture_go/internal/infrastructure/deferred"
 	pool "clean_architecture_go/internal/infrastructure/pool/transfer"
 	"clean_architecture_go/internal/infrastructure/queue"
 	"clean_architecture_go/internal/infrastructure/repository"
@@ -32,7 +33,10 @@ func (app *Application) Run() {
 
 	transferJobListener := pool.NewListener(TransferListenerSize, conn)
 
-	q := queue.New(OrderQueueSize, true, conn)
+	q := queue.New(OrderQueueSize, app.config.Queue.IsAsync, conn)
+
+	d := deferred.New(3, 5, 3, conn, 3)
+	d.Handle()
 
 	uc := usecase.New(repo, transferJobListener, q)
 
